@@ -16,6 +16,8 @@ public class Application {
 
 	@Bean
 	public InitializingBean init(Network network) {
+		// Starts the initialization of the routing network
+		// Please provide file 'test.osm.pbf' on the working directory
 		return network::initialize;
 	}
 

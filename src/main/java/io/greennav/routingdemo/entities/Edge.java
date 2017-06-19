@@ -2,7 +2,14 @@ package io.greennav.routingdemo.entities;
 
 public class Edge {
 
+	/**
+	 * The edge costs, usually describing the distance, time, or energy use.
+	 */
 	private double distance;
+
+	/**
+	 * The target vertex of this edge.
+	 */
 	private long to;
 
 	public Edge(double distance, long to) {

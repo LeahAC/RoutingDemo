@@ -36,22 +36,38 @@ public class Network {
 	@Autowired
 	private Routing routing;
 
+	/**
+	 * A mapping from vertex ids to vertex objects, which contain coordinates.
+	 */
 	private Map<Long, Vertex> vertices = new HashMap<>();
 
+	/**
+	 * A multi map from vertices to outgoing edges, which have a length and a
+	 * target vertex.
+	 */
 	private Multimap<Long, Edge> edges = MultimapBuilder.hashKeys().hashSetValues().build();
 
+	/**
+	 * The initializtion loads the PBF file. Then, compute the edge distances.
+	 * Finally, compute the major component, because usually OSM data has a lot
+	 * of smaller disconnected components due to the slicing process.
+	 * 
+	 * @throws Exception
+	 *             should only be thrown, if file does not exists or is corrupt
+	 */
 	public void initialize() throws Exception {
-		readOSMFile();
+		readOSMFile("test.osm.pbf");
 		computeEdgeDistances();
 		extractMajorComponent();
 	}
 
-	private void readOSMFile() throws FileNotFoundException {
+	private void readOSMFile(String filename) throws FileNotFoundException {
 		// On booting up, load the data from file
-		File testFile = new File("test.osm.pbf");
+		File testFile = new File(filename);
 		FileInputStream fis = new FileInputStream(testFile);
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		OsmosisReader reader = new OsmosisReader(bis);
+		// The sink serves as a callback, reacting on any nodes and ways found
 		reader.setSink(new Sink() {
 
 			@Override
@@ -141,12 +157,26 @@ public class Network {
 		return 1d;
 	}
 
+	/**
+	 * Get the set of vertex IDs, that are successors to the given vertex.
+	 * 
+	 * @param vertex
+	 * @return
+	 */
 	public Set<Long> getSuccessors(long vertex) {
 		return edges.get(vertex).stream()
 				.map(e -> e.getTo())
 				.collect(Collectors.toSet());
 	}
 
+	/**
+	 * Get the edge distance between vertex 'from' and vertex 'to'. If the
+	 * vertices are not connected, the distance is set to positive infinity.
+	 * 
+	 * @param from
+	 * @param to
+	 * @return
+	 */
 	public double getEdgeDistance(long from, long to) {
 		return edges.get(from).stream()
 				.filter(e -> e.getTo() == to)
@@ -155,11 +185,16 @@ public class Network {
 				.orElse(Double.POSITIVE_INFINITY);
 	}
 
+	/**
+	 * Gets a random vertex id, which is quite inefficient, but it works
+	 */
 	public Long getRandomVertexId() {
-		// Quite inefficient, but it works
 		return new ArrayList<>(vertices.keySet()).get(new Random().nextInt(vertices.size()));
 	}
 
+	/**
+	 * Get the coordinates of a particular vertex.
+	 */
 	public Vertex getVertex(Long vertexId) {
 		return vertices.get(vertexId);
 	}

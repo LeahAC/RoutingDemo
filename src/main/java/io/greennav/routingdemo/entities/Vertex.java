@@ -2,7 +2,14 @@ package io.greennav.routingdemo.entities;
 
 public class Vertex {
 
+	/**
+	 * Latitude.
+	 */
 	private double lat;
+
+	/**
+	 * Longitude.
+	 */
 	private double lon;
 
 	public Vertex(double lat, double lon) {

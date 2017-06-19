@@ -15,6 +15,10 @@ public class Routing {
 	@Autowired
 	private Network network;
 
+	/**
+	 * The search tree comprises the distance and predecessor values of a
+	 * typical Dijkstra or A* algorithm.
+	 */
 	public static class SearchTree {
 		private Map<Long, Long> predecessors = new HashMap<>();
 		private Map<Long, Double> distances = new HashMap<>();
@@ -28,6 +32,15 @@ public class Routing {
 		}
 	}
 
+	/**
+	 * This is an implementation of Dijkstra's algorithm.
+	 * 
+	 * @param source
+	 *            The source vertex.
+	 * @param target
+	 *            The optional target vertex.
+	 * @return The search space covered by the algorithm.
+	 */
 	public SearchTree route(long source, Long target) {
 
 		SearchTree t = new SearchTree();
